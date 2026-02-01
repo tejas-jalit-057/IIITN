@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="description" content="SAST – Signal Anomaly & Security Tracking. Real-time traffic monitoring, anomaly detection, security intelligence."/>
+<title>SAST – Signal Anomaly & Security Tracking</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════════
+     AUTH – LOGIN
+     ════════════════════════════════════════════════════════════ -->
+<div id="loginPg" class="auth-pg">
+  <div class="auth-card">
+    <div class="auth-card__logo">
+      <div class="logo__shield">
+        <svg viewBox="0 0 24 24"><path d="M12 2L4 6v6c0 5.25 3.83 10.15 8 11.35C16.17 22.15 20 17.25 20 12V6l-8-4z"/></svg>
+      </div>
+      <h2>SAST</h2>
+      <p>Signal Anomaly & Security Tracking</p>
+    </div>
+    <div id="loginMsg" class="auth-msg"></div>
+    <div class="fg"><label>Email</label><input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email"/></div>
+    <div class="fg"><label>Password</label><input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password"/></div>
+    <button class="btn btn--p btn--w" id="doLoginBtn">Sign In</button>
+    <div class="auth-foot">No account? <a href="#" id="goSignup">Sign up</a></div>
+  </div>
+</div>
+
+<!-- AUTH – SIGNUP -->
+<div id="signupPg" class="auth-pg" style="display:none">
+  <div class="auth-card">
+    <div class="auth-card__logo">
+      <div class="logo__shield">
+        <svg viewBox="0 0 24 24"><path d="M12 2L4 6v6c0 5.25 3.83 10.15 8 11.35C16.17 22.15 20 17.25 20 12V6l-8-4z"/></svg>
+      </div>
+      <h2>Create Account</h2>
+      <p>Join SAST to monitor your traffic & security</p>
+    </div>
+    <div id="signupMsg" class="auth-msg"></div>
+    <div class="fg"><label>Username</label><input type="text" id="signupUser" placeholder="johndoe" autocomplete="username"/></div>
+    <div class="fg"><label>Email</label><input type="email" id="signupEmail" placeholder="you@example.com" autocomplete="email"/></div>
+    <div class="fg"><label>Password <span style="color:var(--t3);font-weight:400">(min 6 chars)</span></label><input type="password" id="signupPass" placeholder="••••••••" autocomplete="new-password"/></div>
+    <button class="btn btn--p btn--w" id="doSignupBtn">Create Account</button>
+    <div class="auth-foot">Already have an account? <a href="#" id="goLogin">Sign in</a></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     NAVBAR
+     ════════════════════════════════════════════════════════════ -->
+<nav class="navbar">
+  <a href="#" class="logo">
+    <div class="logo__shield"><svg viewBox="0 0 24 24"><path d="M12 2L4 6v6c0 5.25 3.83 10.15 8 11.35C16.17 22.15 20 17.25 20 12V6l-8-4z"/></svg></div>
+    <span class="logo__text"><span>SAST</span></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#" class="on" data-page="overview">Overview</a></li>
+    <li><a href="#" data-page="traffic">Traffic</a></li>
+    <li><a href="#" data-page="security">Security</a></li>
+    <li><a href="#" data-page="connectivity">Connectivity</a></li>
+    <li><a href="#" data-page="tools">Tools</a></li>
+  </ul>
+  <div class="nav-actions">
+    <span id="userSpan" style="display:none;font-size:.78rem;color:var(--t2);font-weight:500"></span>
+    <button class="btn-theme" id="themeBtn" title="Toggle theme">🌙</button>
+    <button class="btn btn--g btn--sm" id="loginBtn">Sign In</button>
+    <button class="btn btn--g btn--sm" id="logoutBtn" style="display:none">Logout</button>
+  </div>
+  <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+
+<!-- SIDEBAR -->
+<aside class="sidebar sidebar--off" id="sidebar">
+  <div class="sidebar__label">Dashboard</div>
+  <ul class="sidebar__nav">
+    <li><a href="#" class="on" data-page="overview"><span class="ico">📊</span> Overview</a></li>
+    <li><a href="#" data-page="traffic"><span class="ico">📈</span> Traffic</a></li>
+    <li><a href="#" data-page="security"><span class="ico">🛡️</span> Security</a></li>
+    <li><a href="#" data-page="connectivity"><span class="ico">🌐</span> Connectivity</a></li>
+  </ul>
+  <div class="sidebar__label" style="margin-top:10px">Tools</div>
+  <ul class="sidebar__nav">
+    <li><a href="#" data-page="tools"><span class="ico">🔧</span> Tools</a></li>
+  </ul>
+</aside>
+<div id="overlay" class="overlay"></div>
+
+<!-- ════════════════════════════════════════════════════════════
+     MAIN CONTENT
+     ════════════════════════════════════════════════════════════ -->
+<main class="main main--nosb">
+
+<!-- ─── OVERVIEW ──────────────────────────────────────────── -->
+<section id="overview" class="pg on">
+  <div class="ph">
+    <div><h1>Overview</h1><p>Real-time signal monitoring & request analytics — Last 24 hours</p></div>
+  </div>
+
+  <!-- Metric cards -->
+  <div class="mgrid">
+    <div class="card mc mc--a"><span class="mc__lbl">Total Requests</span><span class="mc__val" id="m-totalReq">0</span><span class="mc__badge mc__badge--up">▲ 4.2% vs yesterday</span></div>
+    <div class="card mc mc--a2"><span class="mc__lbl">Peak RPS</span><span class="mc__val" id="m-peakRps">0</span><span class="mc__badge mc__badge--up">▲ 1.8%</span></div>
+    <div class="card mc mc--i"><span class="mc__lbl">Avg RPS</span><span class="mc__val" id="m-avgRps">0</span><span class="mc__badge mc__badge--n">— stable</span></div>
+    <div class="card mc mc--w"><span class="mc__lbl">Active Bots</span><span class="mc__val" id="m-bots">0</span><span class="mc__badge mc__badge--up">▲ 2 new</span></div>
+    <div class="card mc mc--a"><span class="mc__lbl">Duration</span><span class="mc__val" id="m-dur">0</span><span class="mc__badge mc__badge--n">hours monitored</span></div>
+    <div class="card mc mc--ok"><span class="mc__lbl">Success Rate</span><span class="mc__val" id="m-success">0</span><span class="mc__badge mc__badge--up">▲ 0.3%</span></div>
+    <div class="card mc mc--d"><span class="mc__lbl">Failures</span><span class="mc__val" id="m-failures">0</span><span class="mc__badge mc__badge--dn">▼ needs attention</span></div>
+  </div>
+
+  <!-- Charts row -->
+  <div class="cgrid">
+    <!-- RPS timeline (full width) -->
+    <div class="card cgrid--span">
+      <div class="card__h"><h3>Requests Per Second — 24h</h3><span class="tag">Updated live</span></div>
+      <div class="card__b"><div class="cw cw--t"><canvas id="chRps"></canvas></div></div>
+    </div>
+    <!-- HTTP method doughnut -->
+    <div class="card">
+      <div class="card__h"><h3>HTTP Method Distribution</h3></div>
+      <div class="card__b"><div class="cw"><canvas id="chMethod"></canvas></div></div>
+    </div>
+    <!-- Signal summary -->
+    <div class="card" style="display:flex;flex-direction:column">
+      <div class="card__h"><h3>Signal Summary</h3></div>
+      <div class="card__b" style="flex:1;display:flex;flex-direction:column;gap:10px">
+        <div class="ic"><div class="ic__ico ic__ico--a">📡</div><div><h4>Monitoring Active</h4><p>All endpoints tracked across 6 global PoPs with sub-second latency.</p></div></div>
+        <div class="ic"><div class="ic__ico ic__ico--a2">🤖</div><div><h4>Bot Activity Normal</h4><p>14 known bots detected. 5 classified as AI agents. No anomalous spikes.</p></div></div>
+        <div class="ic"><div class="ic__ico ic__ico--w">⚡</div><div><h4>Anomaly Window</h4><p>Minor spike at 02:14 UTC — classified as automated retry loop. Auto-resolved.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── TRAFFIC ────────────────────────────────────────────── -->
+<section id="traffic" class="pg">
+  <div class="ph">
+    <div><h1>Traffic</h1><p>Volume, devices, adoption & AI bot insights</p></div>
+    <div class="stabs">
+      <button class="stab on" data-sub="t-ov">Overview</button>
+      <button class="stab" data-sub="t-ad">Adoption & Usage</button>
+      <button class="stab" data-sub="t-ai">AI Insights</button>
+    </div>
+  </div>
+
+  <!-- Sub: Overview -->
+  <div class="sub" data-sub="t-ov">
+    <div class="cgrid">
+      <div class="card cgrid--span">
+        <div class="card__h"><h3>Traffic Volume — Last 7 Days</h3></div>
+        <div class="card__b"><div class="cw cw--t"><canvas id="chVolume"></canvas></div></div>
+      </div>
+      <div class="card">
+        <div class="card__h"><h3>Mobile vs Desktop vs Tablet</h3></div>
+        <div class="card__b"><div class="cw"><canvas id="chDevice"></canvas></div></div>
+      </div>
+      <div class="card" style="display:flex;flex-direction:column">
+        <div class="card__h"><h3>Quick Stats</h3></div>
+        <div class="card__b" style="flex:1;display:flex;flex-direction:column;gap:9px">
+          <div class="ic"><div class="ic__ico ic__ico--a">📱</div><div><h4>Mobile Rising</h4><p>Mobile traffic up 6.2% week-over-week — now 42% of all visits.</p></div></div>
+          <div class="ic"><div class="ic__ico ic__ico--i">🌍</div><div><h4>Global Reach</h4><p>Requests from 142 countries across 5 continents in the last 24h.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sub: Adoption -->
+  <div class="sub" data-sub="t-ad" style="display:none">
+    <div class="cgrid">
+      <div class="card"><div class="card__h"><h3>Top Browsers</h3></div><div class="card__b"><div class="cw"><canvas id="chBrowser"></canvas></div></div></div>
+      <div class="card"><div class="card__h"><h3>Protocol Comparison</h3><span class="tag">HTTP · HTTPS · HTTP/2 · HTTP/3</span></div><div class="card__b"><div class="cw"><canvas id="chProto"></canvas></div></div></div>
+      <div class="card cgrid--span"><div class="card__h"><h3>Mobile Operating Systems</h3></div><div class="card__b"><div class="cw cw--s"><canvas id="chMobOS"></canvas></div></div></div>
+    </div>
+    <!-- User Agent cards -->
+    <div class="cgrid mt16">
+      <div class="card cgrid--span">
+        <div class="card__h"><h3>User Agent Distribution</h3></div>
+        <div class="card__b">
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:9px">
+            <div class="ic"><div class="ic__ico ic__ico--a">🌐</div><div><h4>Chrome / Blink</h4><p>52.1% of all user agents</p></div></div>
+            <div class="ic"><div class="ic__ico ic__ico--a2">🍎</div><div><h4>Safari / WebKit</h4><p>21.3% — dominant on iOS</p></div></div>
+            <div class="ic"><div class="ic__ico ic__ico--i">🦊</div><div><h4>Firefox / Gecko</h4><p>12.0% — privacy-focused users</p></div></div>
+            <div class="ic"><div class="ic__ico ic__ico--w">🤖</div><div><h4>Bot User Agents</h4><p>8.4% of requests from known bots</p></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sub: AI Insights -->
+  <div class="sub" data-sub="t-ai" style="display:none">
+    <!-- Bot table -->
+    <div class="cgrid">
+      <div class="card cgrid--span">
+        <div class="card__h"><h3>HTTP Traffic by Bot</h3><span class="tag" style="color:var(--a2)">🤖 AI bots highlighted</span></div>
+        <div class="card__b">
+          <div class="tw"><table>
+            <thead><tr><th>Bot Name</th><th>Requests (24h)</th><th>In robots.txt</th></tr></thead>
+            <tbody id="botTbody"></tbody>
+          </table></div>
+        </div>
+      </div>
+    </div>
+    <!-- Best practices -->
+    <div class="cgrid mt16">
+      <div class="card cgrid--span">
+        <div class="card__h"><h3>AI Bot Best Practices</h3></div>
+        <div class="card__b">
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px">
+            <div class="ic"><div class="ic__ico ic__ico--a">✅</div><div><h4>Rate Limiting</h4><p>Implement per-bot rate limits to prevent excessive crawling and protect server resources.</p></div></div>
+            <div class="ic"><div class="ic__ico ic__ico--a2">✅</div><div><h4>robots.txt Management</h4><p>Keep robots.txt up-to-date. Block or allow specific AI crawlers as needed.</p></div></div>
+            <div class="ic"><div class="ic__ico ic__ico--i">✅</div><div><h4>User-Agent Verification</h4><p>Validate bot identity via reverse DNS to avoid spoofed user agents.</p></div></div>
+            <div class="ic"><div class="ic__ico ic__ico--w">✅</div><div><h4>Content Licensing</h4><p>Consider licensing agreements for AI training data access to monetize your content.</p></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- robots.txt agents -->
+    <div class="cgrid mt16">
+      <div class="card cgrid--span">
+        <div class="card__h"><h3>AI User Agents in robots.txt</h3></div>
+        <div class="card__b"><div id="robotsList"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SECURITY ───────────────────────────────────────────── -->
+<section id="security" class="pg">
+  <div class="ph">
+    <div><h1>Security</h1><p>Attack detection & threat intelligence</p></div>
+    <div class="stabs">
+      <button class="stab on" data-sub="s-app">Application Layer</button>
+      <button class="stab" data-sub="s-net">Network Layer</button>
+    </div>
+  </div>
+
+  <!-- App Layer -->
+  <div class="sub" data-sub="s-app">
+    <!-- Volume change banner -->
+    <div class="card" style="margin-bottom:14px;padding:15px 18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+      <div style="flex:1;min-width:180px">
+        <div style="display:flex;align-items:center;gap:9px;margin-bottom:4px">
+          <h3 style="color:var(--t1);margin:0">Application Layer Attack Volume</h3>
+          <span id="chgApp" class="chg chg--dn">▼ 12.4%</span>
+        </div>
+        <p style="font-size:.76rem">Compared to the previous 24-hour window. Attack volume is trending down.</p>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:.67rem;color:var(--t3);text-transform:uppercase;letter-spacing:.5px">Total (24h)</div>
+        <div style="font-size:1.5rem;font-weight:700;font-family:var(--fm);color:var(--danger)" id="totApp">—</div>
+      </div>
+    </div>
+    <div class="cgrid">
+      <div class="card cgrid--span"><div class="card__h"><h3>Application Layer Attack Activity — 24h</h3></div><div class="card__b"><div class="cw cw--t"><canvas id="chAppLine"></canvas></div></div></div>
+      <div class="card"><div class="card__h"><h3>Attack Types</h3></div><div class="card__b"><div class="cw"><canvas id="chAppTypes"></canvas></div></div></div>
+      <div class="card" style="display:flex;flex-direction:column">
+        <div class="card__h"><h3>Threat Intel</h3></div>
+        <div class="card__b" style="flex:1;display:flex;flex-direction:column;gap:9px">
+          <div class="ic"><div class="ic__ico ic__ico--d">🔥</div><div><h4>SQL Injection Spike</h4><p>320 attempts at 02:00 UTC — automated scanner. Source IP blocked.</p></div></div>
+          <div class="ic"><div class="ic__ico ic__ico--w">⚠️</div><div><h4>XSS Attempts</h4><p>Cross-site scripting probes on login and comment endpoints.</p></div></div>
+          <div class="ic"><div class="ic__ico ic__ico--a">✅</div><div><h4>WAF Active</h4><p>Web Application Firewall blocking malicious payloads in real-time.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Net Layer -->
+  <div class="sub" data-sub="s-net" style="display:none">
+    <div class="card" style="margin-bottom:14px;padding:15px 18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+      <div style="flex:1;min-width:180px">
+        <div style="display:flex;align-items:center;gap:9px;margin-bottom:4px">
+          <h3 style="color:var(--t1);margin:0">Network Layer Attack Volume</h3>
+          <span id="chgNet" class="chg chg--up">▲ 8.7%</span>
+        </div>
+        <p style="font-size:.76rem">Network attacks slightly increased. DDoS mitigation is active and effective.</p>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:.67rem;color:var(--t3);text-transform:uppercase;letter-spacing:.5px">Total (24h)</div>
+        <div style="font-size:1.5rem;font-weight:700;font-family:var(--fm);color:var(--a2)" id="totNet">—</div>
+      </div>
+    </div>
+    <div class="cgrid">
+      <div class="card cgrid--span"><div class="card__h"><h3>Network Layer Attack Activity — 24h</h3></div><div class="card__b"><div class="cw cw--t"><canvas id="chNetLine"></canvas></div></div></div>
+      <div class="card"><div class="card__h"><h3>Network Attack Types</h3></div><div class="card__b"><div class="cw"><canvas id="chNetTypes"></canvas></div></div></div>
+      <div class="card" style="display:flex;flex-direction:column">
+        <div class="card__h"><h3>Network Intel</h3></div>
+        <div class="card__b" style="flex:1;display:flex;flex-direction:column;gap:9px">
+          <div class="ic"><div class="ic__ico ic__ico--a2">🛡️</div><div><h4>DDoS Mitigation</h4><p>Volumetric attack at 02:00 UTC absorbed by anycast network. No impact.</p></div></div>
+          <div class="ic"><div class="ic__ico ic__ico--i">📊</div><div><h4>SYN Flood Detected</h4><p>SYN cookies enabled. 28% of network attacks are flood-based.</p></div></div>
+          <div class="ic"><div class="ic__ico ic__ico--a">✅</div><div><h4>BGP Security</h4><p>Route monitoring active. No hijacking attempts in last 7 days.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CONNECTIVITY ──────────────────────────────────────── -->
+<section id="connectivity" class="pg">
+  <div class="ph"><div><h1>Connectivity</h1><p>Internet quality index, speed analysis & performance trends</p></div></div>
+
+  <!-- Current metrics -->
+  <div class="cmrow">
+    <div class="cm"><div class="cm__val" id="cn-iqi">—</div><div class="cm__u">/ 100</div><div class="cm__lbl">Internet Quality Index</div></div>
+    <div class="cm"><div class="cm__val" id="cn-dl">—</div><div class="cm__u">Mbps</div><div class="cm__lbl">Download Speed</div></div>
+    <div class="cm"><div class="cm__val" id="cn-ul">—</div><div class="cm__u">Mbps</div><div class="cm__lbl">Upload Speed</div></div>
+    <div class="cm"><div class="cm__val" id="cn-lat">—</div><div class="cm__u">ms</div><div class="cm__lbl">Avg Latency</div></div>
+  </div>
+
+  <div class="cgrid">
+    <div class="card cgrid--span"><div class="card__h"><h3>Download & Upload Speed</h3><span class="tag">Last 12 hours</span></div><div class="card__b"><div class="cw cw--t"><canvas id="chSpeed"></canvas></div></div></div>
+    <div class="card"><div class="card__h"><h3>Internet Quality Index Trend</h3></div><div class="card__b"><div class="cw"><canvas id="chIQI"></canvas></div></div></div>
+    <div class="card"><div class="card__h"><h3>Latency (ms) by Hour</h3></div><div class="card__b"><div class="cw"><canvas id="chLatency"></canvas></div></div></div>
+  </div>
+
+  <!-- Insights -->
+  <div class="cgrid mt16">
+    <div class="card cgrid--span">
+      <div class="card__h"><h3>Performance Insights</h3></div>
+      <div class="card__b">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px">
+          <div class="ic"><div class="ic__ico ic__ico--a">🚀</div><div><h4>Peak Download</h4><p>Highest recorded download speed of 165.2 Mbps at 10:00 UTC — healthy conditions.</p></div></div>
+          <div class="ic"><div class="ic__ico ic__ico--a2">📍</div><div><h4>Best Region</h4><p>Europe PoP shows the lowest avg latency at 15ms across the monitoring window.</p></div></div>
+          <div class="ic"><div class="ic__ico ic__ico--w">⚡</div><div><h4>Latency Spike</h4><p>Brief spike to 32ms at 14:00 UTC — likely caused by a BGP route change.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── TOOLS ──────────────────────────────────────────────── -->
+<section id="tools" class="pg">
+  <div class="ph">
+    <div><h1>Tools</h1><p>Data explorer, filtering & report downloads</p></div>
+    <div class="stabs">
+      <button class="ttab on" data-view="explorer">Data Explorer</button>
+      <button class="ttab" data-view="reports">Reports</button>
+    </div>
+  </div>
+
+  <!-- Explorer -->
+  <div class="tview" data-view="explorer">
+    <div class="card" style="margin-bottom:14px">
+      <div class="card__h"><h3>Filters</h3></div>
+      <div class="card__b">
+        <div class="fbar">
+          <div><label>Protocol</label>
+            <select id="fProto"><option value="">All Protocols</option><option value="HTTP">HTTP</option><option value="HTTPS">HTTPS</option><option value="HTTP/2">HTTP/2</option><option value="HTTP/3">HTTP/3</option></select></div>
+          <div><label>Device</label>
+            <select id="fDevice"><option value="">All Devices</option><option value="Desktop">Desktop</option><option value="Mobile">Mobile</option><option value="Tablet">Tablet</option></select></div>
+          <div><label>Region</label>
+            <select id="fRegion"><option value="">All Regions</option><option value="US-East">US-East</option><option value="US-West">US-West</option><option value="EU-West">EU-West</option><option value="Asia-Pacific">Asia-Pacific</option><option value="South America">South America</option></select></div>
+          <button class="btn btn--p btn--sm" id="filterApply">Apply</button>
+          <button class="btn btn--g btn--sm" id="filterReset">Reset</button>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card__h"><h3>Request Log</h3><span class="tag">50 entries</span></div>
+      <div class="card__b">
+        <div class="tw"><table>
+          <thead><tr><th>#</th><th>Timestamp</th><th>Method</th><th>Status</th><th>Protocol</th><th>Device</th><th>Region</th><th>Latency</th></tr></thead>
+          <tbody id="expTbody"></tbody>
+        </table></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reports -->
+  <div class="tview" data-view="reports" style="display:none">
+    <div class="card">
+      <div class="card__h"><h3>Available Reports</h3><span class="tag">Monthly · Quarterly · Annual</span></div>
+      <div class="card__b" style="padding:0"><div id="reportList"></div></div>
+    </div>
+  </div>
+</section>
+
+</main><!-- end .main -->
+
+<!-- ════════════════════════════════════════════════════════════
+     MOBILE BOTTOM NAV
+     ════════════════════════════════════════════════════════════ -->
+<nav class="bnav">
+  <button class="bnav__item on" data-page="overview"><span class="ico">📊</span>Overview</button>
+  <button class="bnav__item" data-page="traffic"><span class="ico">📈</span>Traffic</button>
+  <button class="bnav__item" data-page="security"><span class="ico">🛡️</span>Security</button>
+  <button class="bnav__item" data-page="tools"><span class="ico">🔧</span>Tools</button>
+</nav>
+
+<!-- ════════════════════════════════════════════════════════════
+     SCRIPTS
+     ════════════════════════════════════════════════════════════ -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
