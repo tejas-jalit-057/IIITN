@@ -195,8 +195,16 @@ function toggleTheme() {
    5. DATA LOADING
    ═══════════════════════════════════════════════════════════════ */
 async function loadData() {
-    const sections = ['overview','traffic','security','connectivity','bots','tools'];
-    const fallbacks = { overview:dummyOverview, traffic:dummyTraffic, security:dummySecurity, connectivity:dummyConnectivity, bots:dummyBots, tools:dummyTools };
+    const sections = ['overview','traffic','sentinel_shield','security','connectivity','bots','tools'];
+    const fallbacks = { 
+        overview:dummyOverview, 
+        traffic:dummyTraffic, 
+        sentinel_shield:dummySentinelShield,
+        security:dummySecurity, 
+        connectivity:dummyConnectivity, 
+        bots:dummyBots, 
+        tools:dummyTools 
+    };
     await Promise.all(sections.map(async s => {
         try {
             const r = await fetch('php/api.php?section='+s);
@@ -450,11 +458,12 @@ function makeChart(id, config) {
    ═══════════════════════════════════════════════════════════════ */
 function renderPage(id) {
     switch(id) {
-        case 'overview':     renderOverview();     break;
-        case 'traffic':      renderTraffic();      break;
-        case 'security':     renderSecurity();     break;
-        case 'connectivity': renderConnectivity(); break;
-        case 'tools':        renderTools();        break;
+        case 'overview':       renderOverview();       break;
+        case 'traffic':        renderTraffic();        break;
+        case 'sentinel_shield':renderSentinelShield(); break;
+        case 'security':       renderSecurity();       break;
+        case 'connectivity':   renderConnectivity();   break;
+        case 'tools':          renderTools();          break;
     }
 }
 
@@ -666,6 +675,304 @@ function renderSecurity() {
     });
 }
 
+/* ─── SENTINEL SHIELD ─────────────────────────────────────────── */
+function renderSentinelShield() {
+    const d = App.data.sentinel_shield; if (!d) return;
+    
+    // Update status indicators
+    const statusEl = document.getElementById('attackIndicator');
+    const phaseEl = document.getElementById('phaseInfo');
+    if (statusEl) {
+        statusEl.className = `status-indicator ${d.status.attack_detected ? 'status-attack' : 'status-normal'}`;
+        statusEl.querySelector('.status-text').textContent = d.status.attack_detected ? 'ATTACK DETECTED' : 'SYSTEM NORMAL';
+    }
+    if (phaseEl) phaseEl.textContent = `Phase: ${d.status.current_phase.charAt(0).toUpperCase() + d.status.current_phase.slice(1)}`;
+    
+    // Traffic Rate
+    makeChart('chTrafficRate', {
+        type:'line',
+        data:{
+            labels:d.realtime_metrics.traffic_rate.labels,
+            datasets:[{ 
+                label:'Requests/sec', 
+                data:d.realtime_metrics.traffic_rate.data, 
+                borderColor:'#3b82f6', 
+                borderWidth:2, 
+                backgroundColor:'rgba(59,130,246,.08)', 
+                fill:true, 
+                tension:.3, 
+                pointRadius:0, 
+                pointHoverRadius:4 
+            }],
+        },
+        options: baseOpts({}),
+    });
+    
+    // Shannon Entropy
+    makeChart('chShannonEntropy', {
+        type:'line',
+        data:{
+            labels:d.realtime_metrics.shannon_entropy.labels,
+            datasets:[{ 
+                label:'Entropy', 
+                data:d.realtime_metrics.shannon_entropy.data, 
+                borderColor:'#22c55e', 
+                borderWidth:2, 
+                backgroundColor:'rgba(34,197,94,.08)', 
+                fill:true, 
+                tension:.3, 
+                pointRadius:0, 
+                pointHoverRadius:4 
+            }],
+        },
+        options: baseOpts({}),
+    });
+    
+    // Hurst Exponent
+    makeChart('chHurstExponent', {
+        type:'line',
+        data:{
+            labels:d.realtime_metrics.hurst_exponent.labels,
+            datasets:[{ 
+                label:'Hurst', 
+                data:d.realtime_metrics.hurst_exponent.data, 
+                borderColor:'#ec4899', 
+                borderWidth:2, 
+                backgroundColor:'rgba(236,72,153,.08)', 
+                fill:true, 
+                tension:.3, 
+                pointRadius:0, 
+                pointHoverRadius:4 
+            }],
+        },
+        options: baseOpts({}),
+    });
+    
+    // Burst Intensity
+    makeChart('chBurstIntensity', {
+        type:'line',
+        data:{
+            labels:d.realtime_metrics.burst_intensity.labels,
+            datasets:[{ 
+                label:'Burst', 
+                data:d.realtime_metrics.burst_intensity.data, 
+                borderColor:'#06b6d4', 
+                borderWidth:2, 
+                backgroundColor:'rgba(6,182,212,.08)', 
+                fill:true, 
+                tension:.3, 
+                pointRadius:0, 
+                pointHoverRadius:4 
+            }],
+        },
+        options: baseOpts({}),
+    });
+    
+    // Periodicity
+    makeChart('chPeriodicity', {
+        type:'line',
+        data:{
+            labels:d.realtime_metrics.periodicity.labels,
+            datasets:[{ 
+                label:'Periodicity', 
+                data:d.realtime_metrics.periodicity.data, 
+                borderColor:'#f59e0b', 
+                borderWidth:2, 
+                backgroundColor:'rgba(245,158,11,.08)', 
+                fill:true, 
+                tension:.3, 
+                pointRadius:0, 
+                pointHoverRadius:4 
+            }],
+        },
+        options: baseOpts({}),
+    });
+    
+    // Frequency Peak
+    makeChart('chFrequencyPeak', {
+        type:'line',
+        data:{
+            labels:d.realtime_metrics.frequency_peak.labels,
+            datasets:[{ 
+                label:'Frequency', 
+                data:d.realtime_metrics.frequency_peak.data, 
+                borderColor:'#a855f7', 
+                borderWidth:2, 
+                backgroundColor:'rgba(168,85,247,.08)', 
+                fill:true, 
+                tension:.3, 
+                pointRadius:0, 
+                pointHoverRadius:4 
+            }],
+        },
+        options: baseOpts({}),
+    });
+    
+    // SP Anomaly Score
+    makeChart('chSpAnomalyScore', {
+        type:'line',
+        data:{
+            labels:d.realtime_metrics.sp_anomaly_score.labels,
+            datasets:[{ 
+                label:'Anomaly Score', 
+                data:d.realtime_metrics.sp_anomaly_score.data, 
+                borderColor:'#ef4444', 
+                borderWidth:2, 
+                backgroundColor:'rgba(239,68,68,.08)', 
+                fill:true, 
+                tension:.3, 
+                pointRadius:0, 
+                pointHoverRadius:4 
+            }],
+        },
+        options: baseOpts({}),
+    });
+    
+    // ML Attack Probability
+    makeChart('chMlAttackProbability', {
+        type:'line',
+        data:{
+            labels:d.realtime_metrics.ml_attack_probability.labels,
+            datasets:[{ 
+                label:'Attack Probability', 
+                data:d.realtime_metrics.ml_attack_probability.data, 
+                borderColor:'#6366f1', 
+                borderWidth:2, 
+                backgroundColor:'rgba(99,102,241,.08)', 
+                fill:true, 
+                tension:.3, 
+                pointRadius:0, 
+                pointHoverRadius:4 
+            }],
+        },
+        options: baseOpts({}),
+    });
+    
+    // Feature Importance
+    makeChart('chFeatureImportance', {
+        type:'bar',
+        data:{
+            labels:d.analysis.feature_importance.map(f=>f.feature),
+            datasets:[{ 
+                label:'Importance', 
+                data:d.analysis.feature_importance.map(f=>f.importance), 
+                backgroundColor:'#14b8a6', 
+                borderWidth:0 
+            }],
+        },
+        options: baseOpts({}),
+    });
+    
+    // Detection Comparison
+    makeChart('chDetectionComparison', {
+        type:'line',
+        data:{
+            labels:d.realtime_metrics.traffic_rate.labels,
+            datasets:[
+                { label:'Ground Truth', data: d.realtime_metrics.traffic_rate.data.map(v => v > 400 ? 1 : 0), borderColor:'#84cc16', borderWidth:2, borderDash:[5,5], pointRadius:0 },
+                { label:'SP Detection', data: d.realtime_metrics.sp_anomaly_score.data.map(v => v > 0.7 ? 1 : 0), borderColor:'#f97316', borderWidth:2, pointRadius:0 },
+                { label:'ML Detection', data: d.realtime_metrics.ml_attack_probability.data.map(v => v > 0.5 ? 1 : 0), borderColor:'#6366f1', borderWidth:2, pointRadius:0 },
+            ],
+        },
+        options: baseOpts({}),
+    });
+    
+    // Render confusion matrices
+    renderConfusionMatrix('spMatrix', d.analysis.sp_confusion_matrix);
+    renderConfusionMatrix('mlMatrix', d.analysis.ml_confusion_matrix);
+    
+    // Render mitigation actions
+    renderMitigationActions(d.mitigation);
+    
+    // Render performance metrics
+    renderPerformanceMetrics(d.analysis.detection_performance);
+    
+    // Render thresholds
+    renderThresholds(d.thresholds);
+}
+
+function renderConfusionMatrix(containerId, matrix) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    
+    container.innerHTML = `
+        <div class="matrix-grid">
+            <div class="matrix-cell cell-tn">${matrix.tn}</div>
+            <div class="matrix-cell cell-fp">${matrix.fp}</div>
+            <div class="matrix-cell cell-fn">${matrix.fn}</div>
+            <div class="matrix-cell cell-tp">${matrix.tp}</div>
+        </div>
+        <div class="matrix-labels">
+            <div class="matrix-label label-predicted">Predicted</div>
+            <div class="matrix-label label-actual">Actual</div>
+        </div>
+    `;
+}
+
+function renderMitigationActions(mitigation) {
+    const container = document.getElementById('mitigationGrid');
+    if (!container) return;
+    
+    container.innerHTML = mitigation.map(action => `
+        <div class="mitigation-item ${action.status}">
+            <div class="mitigation-icon">${action.status === 'active' ? '🛡️' : '⏸️'}</div>
+            <div class="mitigation-content">
+                <h4>${action.action}</h4>
+                <p>${action.threshold || action.blocked_ips ? `${action.threshold || action.blocked_ips + ' IPs blocked'}` : 'Standby'}</p>
+            </div>
+            <div class="mitigation-status">${action.status}</div>
+        </div>
+    `).join('');
+}
+
+function renderPerformanceMetrics(performance) {
+    const container = document.getElementById('perfMetrics');
+    if (!container) return;
+    
+    container.innerHTML = `
+        <div class="perf-item">
+            <span class="perf-label">SP Accuracy</span>
+            <span class="perf-value">${performance.sp_accuracy}%</span>
+        </div>
+        <div class="perf-item">
+            <span class="perf-label">ML Accuracy</span>
+            <span class="perf-value">${performance.ml_accuracy}%</span>
+        </div>
+        <div class="perf-item">
+            <span class="perf-label">Detection Latency</span>
+            <span class="perf-value">${performance.detection_latency_ms}ms</span>
+        </div>
+        <div class="perf-item">
+            <span class="perf-label">False Positive Rate</span>
+            <span class="perf-value">${performance.false_positive_rate}%</span>
+        </div>
+    `;
+}
+
+function renderThresholds(thresholds) {
+    const container = document.getElementById('thresholdList');
+    if (!container) return;
+    
+    container.innerHTML = `
+        <div class="threshold-item">
+            <span class="threshold-label">Entropy Threshold</span>
+            <span class="threshold-value">${thresholds.entropy_threshold}</span>
+        </div>
+        <div class="threshold-item">
+            <span class="threshold-label">Hurst Threshold</span>
+            <span class="threshold-value">${thresholds.hurst_threshold}</span>
+        </div>
+        <div class="threshold-item">
+            <span class="threshold-label">Anomaly Threshold</span>
+            <span class="threshold-value">${thresholds.anomaly_threshold}</span>
+        </div>
+        <div class="threshold-item">
+            <span class="threshold-label">ML Decision Boundary</span>
+            <span class="threshold-value">${thresholds.ml_decision_boundary}</span>
+        </div>
+    `;
+}
+
 function setBadge(id, pct) {
     const el = document.getElementById(id); if(!el) return;
     const up = pct > 0;
@@ -792,7 +1099,105 @@ function bindFilters(allRows) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   11. ANIMATED COUNTER
+   11. SENTINEL SHIELD DUMMY DATA
+   ═══════════════════════════════════════════════════════════════ */
+function dummySentinelShield() {
+    // Generate 500 seconds of data with DDoS attack at t=200-400s
+    const timeLabels = [];
+    const trafficRate = [];
+    const shannonEntropy = [];
+    const hurstExponent = [];
+    const burstIntensity = [];
+    const periodicity = [];
+    const frequencyPeak = [];
+    const spAnomalyScore = [];
+    const mlAttackProbability = [];
+    
+    for (let i = 0; i < 500; i++) {
+        timeLabels.push(i);
+        const isAttack = i >= 200 && i <= 400;
+        
+        // Traffic Rate (requests/sec)
+        trafficRate.push(isAttack ? 800 + Math.random() * 100 - 50 : 50 + Math.random() * 50 - 25);
+        
+        // Shannon Entropy (IP diversity) - drops during attack
+        shannonEntropy.push(isAttack ? 2.1 + Math.random() * 0.5 - 0.25 : 4.2 + Math.random() * 0.7 - 0.35);
+        
+        // Hurst Exponent (self-similarity) - >0.5 during attack
+        hurstExponent.push(isAttack ? 0.72 + Math.random() * 0.13 - 0.065 : 0.42 + Math.random() * 0.18 - 0.09);
+        
+        // Burst Intensity (wavelet-based)
+        burstIntensity.push(isAttack ? 0.85 + Math.random() * 0.25 - 0.125 : 0.15 + Math.random() * 0.15 - 0.075);
+        
+        // Periodicity (auto-correlation)
+        periodicity.push(isAttack ? 0.78 + Math.random() * 0.20 - 0.10 : 0.22 + Math.random() * 0.18 - 0.09);
+        
+        // Frequency Peak (FFT analysis)
+        frequencyPeak.push(isAttack ? 0.92 + Math.random() * 0.13 - 0.065 : 0.28 + Math.random() * 0.20 - 0.10);
+        
+        // SP Anomaly Score (signal processing fusion)
+        spAnomalyScore.push(isAttack ? 0.88 + Math.random() * 0.20 - 0.10 : 0.12 + Math.random() * 0.13 - 0.065);
+        
+        // ML Attack Probability
+        mlAttackProbability.push(isAttack ? 0.95 + Math.random() * 0.10 - 0.05 : 0.03 + Math.random() * 0.07 - 0.035);
+    }
+    
+    return {
+        status: {
+            attack_detected: true,
+            attack_start: 200,
+            attack_end: 400,
+            current_phase: 'mitigation',
+            system_health: 'operational',
+        },
+        realtime_metrics: {
+            traffic_rate: { labels: timeLabels, data: trafficRate },
+            shannon_entropy: { labels: timeLabels, data: shannonEntropy },
+            hurst_exponent: { labels: timeLabels, data: hurstExponent },
+            burst_intensity: { labels: timeLabels, data: burstIntensity },
+            periodicity: { labels: timeLabels, data: periodicity },
+            frequency_peak: { labels: timeLabels, data: frequencyPeak },
+            sp_anomaly_score: { labels: timeLabels, data: spAnomalyScore },
+            ml_attack_probability: { labels: timeLabels, data: mlAttackProbability },
+        },
+        analysis: {
+            feature_importance: [
+                { feature: 'CurrentRate', importance: 0.42 },
+                { feature: 'ShannonEntropy', importance: 0.18 },
+                { feature: 'HurstExponent', importance: 0.15 },
+                { feature: 'BurstIntensity', importance: 0.12 },
+                { feature: 'Periodicity', importance: 0.08 },
+                { feature: 'FrequencyPeak', importance: 0.05 },
+            ],
+            sp_confusion_matrix: { tn: 340, fp: 10, fn: 20, tp: 130 },
+            ml_confusion_matrix: { tn: 350, fp: 0, fn: 0, tp: 150 },
+            detection_performance: {
+                sp_accuracy: 94.0,
+                sp_precision: 92.9,
+                sp_recall: 86.7,
+                ml_accuracy: 100.0,
+                ml_precision: 100.0,
+                ml_recall: 100.0,
+                detection_latency_ms: 45,
+                false_positive_rate: 0.0,
+            },
+        },
+        mitigation: [
+            { action: 'Rate Limit', status: 'active', threshold: '100 req/s' },
+            { action: 'IP Block', status: 'active', blocked_ips: 127 },
+            { action: 'CAPTCHA', status: 'standby', trigger_threshold: '80%' },
+        ],
+        thresholds: {
+            entropy_threshold: 3.0,
+            hurst_threshold: 0.5,
+            anomaly_threshold: 0.7,
+            ml_decision_boundary: 0.5,
+        },
+    };
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   12. ANIMATED COUNTER
    ═══════════════════════════════════════════════════════════════ */
 function countUp(id, target, dec=0) {
     const el = document.getElementById(id); if (!el) return;

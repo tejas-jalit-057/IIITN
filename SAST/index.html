@@ -62,6 +62,7 @@
   <ul class="nav-links">
     <li><a href="#" class="on" data-page="overview">Overview</a></li>
     <li><a href="#" data-page="traffic">Traffic</a></li>
+    <li><a href="#" data-page="sentinel_shield">🛡️ SENTINEL</a></li>
     <li><a href="#" data-page="security">Security</a></li>
     <li><a href="#" data-page="connectivity">Connectivity</a></li>
     <li><a href="#" data-page="tools">Tools</a></li>
@@ -81,7 +82,8 @@
   <ul class="sidebar__nav">
     <li><a href="#" class="on" data-page="overview"><span class="ico">📊</span> Overview</a></li>
     <li><a href="#" data-page="traffic"><span class="ico">📈</span> Traffic</a></li>
-    <li><a href="#" data-page="security"><span class="ico">🛡️</span> Security</a></li>
+    <li><a href="#" data-page="sentinel_shield"><span class="ico">🛡️</span> SENTINEL SHIELD</a></li>
+    <li><a href="#" data-page="security"><span class="ico">🔒</span> Security</a></li>
     <li><a href="#" data-page="connectivity"><span class="ico">🌐</span> Connectivity</a></li>
   </ul>
   <div class="sidebar__label" style="margin-top:10px">Tools</div>
@@ -300,6 +302,142 @@
   </div>
 </section>
 
+<!-- ─── SENTINEL SHIELD ──────────────────────────────────────── -->
+<section id="sentinel_shield" class="pg">
+  <div class="ph">
+    <div><h1>🛡️ SENTINEL SHIELD</h1><p>Advanced DDoS Detection System - Real-time signal processing & ML analysis</p></div>
+    <div class="sentinel-status" id="sentinelStatus">
+      <div class="status-indicator status-attack" id="attackIndicator">
+        <span class="status-icon">⚠️</span>
+        <span class="status-text">ATTACK DETECTED</span>
+      </div>
+      <div class="phase-info" id="phaseInfo">Phase: Mitigation Active</div>
+    </div>
+  </div>
+
+  <!-- Real-time Metrics Grid -->
+  <div class="cgrid">
+    <!-- Traffic Rate -->
+    <div class="card cgrid--span">
+      <div class="card__h"><h3 style="color:#3b82f6">📈 Traffic Rate</h3><span class="tag" style="color:#3b82f6">Live</span></div>
+      <div class="card__b"><div class="cw cw--t"><canvas id="chTrafficRate"></canvas></div></div>
+    </div>
+    
+    <!-- Shannon Entropy -->
+    <div class="card">
+      <div class="card__h"><h3 style="color:#22c55e">🔀 Shannon Entropy</h3><span class="tag" style="color:#22c55e">IP Diversity</span></div>
+      <div class="card__b"><div class="cw"><canvas id="chShannonEntropy"></canvas></div></div>
+    </div>
+    
+    <!-- Hurst Exponent -->
+    <div class="card">
+      <div class="card__h"><h3 style="color:#ec4899">📊 Hurst Exponent</h3><span class="tag" style="color:#ec4899">Self-Similarity</span></div>
+      <div class="card__b"><div class="cw"><canvas id="chHurstExponent"></canvas></div></div>
+    </div>
+  </div>
+
+  <!-- Signal Processing Metrics -->
+  <div class="cgrid mt16">
+    <!-- Burst Intensity -->
+    <div class="card">
+      <div class="card__h"><h3 style="color:#06b6d4">💥 Burst Intensity</h3><span class="tag" style="color:#06b6d4">Wavelet Analysis</span></div>
+      <div class="card__b"><div class="cw"><canvas id="chBurstIntensity"></canvas></div></div>
+    </div>
+    
+    <!-- Periodicity -->
+    <div class="card">
+      <div class="card__h"><h3 style="color:#f59e0b">🔄 Periodicity</h3><span class="tag" style="color:#f59e0b">Auto-Correlation</span></div>
+      <div class="card__b"><div class="cw"><canvas id="chPeriodicity"></canvas></div></div>
+    </div>
+    
+    <!-- Frequency Peak -->
+    <div class="card">
+      <div class="card__h"><h3 style="color:#a855f7">📡 Frequency Peak</h3><span class="tag" style="color:#a855f7">FFT Analysis</span></div>
+      <div class="card__b"><div class="cw"><canvas id="chFrequencyPeak"></canvas></div></div>
+    </div>
+  </div>
+
+  <!-- Detection Scores -->
+  <div class="cgrid mt16">
+    <!-- SP Anomaly Score -->
+    <div class="card">
+      <div class="card__h"><h3 style="color:#ef4444">🚨 SP Anomaly Score</h3><span class="tag" style="color:#ef4444">Signal Processing</span></div>
+      <div class="card__b"><div class="cw"><canvas id="chSpAnomalyScore"></canvas></div></div>
+    </div>
+    
+    <!-- ML Attack Probability -->
+    <div class="card">
+      <div class="card__h"><h3 style="color:#6366f1">🤖 ML Attack Probability</h3><span class="tag" style="color:#6366f1">Machine Learning</span></div>
+      <div class="card__b"><div class="cw"><canvas id="chMlAttackProbability"></canvas></div></div>
+    </div>
+    
+    <!-- Feature Importance -->
+    <div class="card">
+      <div class="card__h"><h3 style="color:#14b8a6">📋 Feature Importance</h3><span class="tag" style="color:#14b8a6">ML Model</span></div>
+      <div class="card__b"><div class="cw"><canvas id="chFeatureImportance"></canvas></div></div>
+    </div>
+  </div>
+
+  <!-- Analysis & Performance -->
+  <div class="cgrid mt16">
+    <!-- Confusion Matrices -->
+    <div class="card">
+      <div class="card__h"><h3 style="color:#f97316">📊 Confusion Matrices</h3><span class="tag" style="color:#f97316">SP vs ML</span></div>
+      <div class="card__b">
+        <div class="matrix-container">
+          <div class="matrix-section">
+            <h4>Signal Processing</h4>
+            <div class="matrix" id="spMatrix"></div>
+          </div>
+          <div class="matrix-section">
+            <h4>Machine Learning</h4>
+            <div class="matrix" id="mlMatrix"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Detection Comparison -->
+    <div class="card cgrid--span">
+      <div class="card__h"><h3 style="color:#84cc16">🔍 Detection Comparison</h3><span class="tag" style="color:#84cc16">Ground Truth</span></div>
+      <div class="card__b"><div class="cw cw--t"><canvas id="chDetectionComparison"></canvas></div></div>
+    </div>
+  </div>
+
+  <!-- Mitigation Actions -->
+  <div class="cgrid mt16">
+    <div class="card cgrid--span">
+      <div class="card__h"><h3>🛡️ Mitigation Actions</h3><span class="tag">Active Defense</span></div>
+      <div class="card__b">
+        <div class="mitigation-grid" id="mitigationGrid">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Performance Metrics -->
+  <div class="cgrid mt16">
+    <div class="card">
+      <div class="card__h"><h3>⚡ Detection Performance</h3><span class="tag">Real-time</span></div>
+      <div class="card__b">
+        <div class="perf-metrics" id="perfMetrics">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="card__h"><h3>🎯 Thresholds</h3><span class="tag">Detection Limits</span></div>
+      <div class="card__b">
+        <div class="threshold-list" id="thresholdList">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ─── CONNECTIVITY ──────────────────────────────────────── -->
 <section id="connectivity" class="pg">
   <div class="ph"><div><h1>Connectivity</h1><p>Internet quality index, speed analysis & performance trends</p></div></div>
@@ -388,7 +526,7 @@
 <nav class="bnav">
   <button class="bnav__item on" data-page="overview"><span class="ico">📊</span>Overview</button>
   <button class="bnav__item" data-page="traffic"><span class="ico">📈</span>Traffic</button>
-  <button class="bnav__item" data-page="security"><span class="ico">🛡️</span>Security</button>
+  <button class="bnav__item" data-page="sentinel_shield"><span class="ico">🛡️</span>SENTINEL</button>
   <button class="bnav__item" data-page="tools"><span class="ico">🔧</span>Tools</button>
 </nav>
 

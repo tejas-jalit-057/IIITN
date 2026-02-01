@@ -13,13 +13,14 @@ header('Access-Control-Allow-Origin: *');
 $section = $_GET['section'] ?? '';
 
 echo json_encode(match($section) {
-    'overview'     => overviewData(),
-    'traffic'      => trafficData(),
-    'security'     => securityData(),
-    'connectivity' => connectivityData(),
-    'bots'         => botData(),
-    'tools'        => toolsData(),
-    default        => (function(){ http_response_code(400); return ['error'=>'Unknown section']; })(),
+    'overview'        => overviewData(),
+    'traffic'         => trafficData(),
+    'security'        => securityData(),
+    'connectivity'    => connectivityData(),
+    'bots'            => botData(),
+    'tools'           => toolsData(),
+    'sentinel_shield' => sentinelShieldData(),
+    default           => (function(){ http_response_code(400); return ['error'=>'Unknown section']; })(),
 });
 
 // ═══════════════════════════════════════════════════════════════
@@ -190,6 +191,158 @@ function toolsData(): array {
             ['id'=>3,'title'=>'Q4 2025 Quarterly Report',     'type'=>'quarterly', 'date'=>'2025-12-31','size'=>'5.8 MB'],
             ['id'=>4,'title'=>'2025 Annual Report',           'type'=>'yearly',    'date'=>'2025-12-31','size'=>'12.3 MB'],
             ['id'=>5,'title'=>'November 2025 Monthly Report', 'type'=>'monthly',   'date'=>'2025-11-30','size'=>'1.9 MB'],
+        ],
+    ];
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SENTINEL SHIELD - DDoS Detection System
+// ═══════════════════════════════════════════════════════════════
+function sentinelShieldData(): array {
+    // Generate 500 seconds of data with DDoS attack at t=200-400s
+    $timeLabels = [];
+    $trafficRate = [];
+    $shannonEntropy = [];
+    $hurstExponent = [];
+    $burstIntensity = [];
+    $periodicity = [];
+    $frequencyPeak = [];
+    $spAnomalyScore = [];
+    $mlAttackProbability = [];
+    
+    for ($i = 0; $i < 500; $i++) {
+        $timeLabels[] = $i;
+        
+        // Simulate attack window (200-400s)
+        $isAttack = $i >= 200 && $i <= 400;
+        
+        // Traffic Rate (requests/sec)
+        if ($isAttack) {
+            $trafficRate[] = 800 + rand(-50, 100); // Attack spike
+        } else {
+            $trafficRate[] = 50 + rand(-20, 30); // Normal traffic
+        }
+        
+        // Shannon Entropy (IP diversity) - drops during attack
+        if ($isAttack) {
+            $shannonEntropy[] = 2.1 + rand(-0.2, 0.3); // Low entropy
+        } else {
+            $shannonEntropy[] = 4.2 + rand(-0.3, 0.4); // Normal entropy
+        }
+        
+        // Hurst Exponent (self-similarity) - >0.5 during attack
+        if ($isAttack) {
+            $hurstExponent[] = 0.72 + rand(-0.05, 0.08); // Attack pattern
+        } else {
+            $hurstExponent[] = 0.42 + rand(-0.08, 0.10); // Random walk
+        }
+        
+        // Burst Intensity (wavelet-based)
+        if ($isAttack) {
+            $burstIntensity[] = 0.85 + rand(-0.1, 0.15); // High burst
+        } else {
+            $burstIntensity[] = 0.15 + rand(-0.05, 0.10); // Normal burst
+        }
+        
+        // Periodicity (auto-correlation)
+        if ($isAttack) {
+            $periodicity[] = 0.78 + rand(-0.08, 0.12); // High periodicity
+        } else {
+            $periodicity[] = 0.22 + rand(-0.08, 0.10); // Low periodicity
+        }
+        
+        // Frequency Peak (FFT analysis)
+        if ($isAttack) {
+            $frequencyPeak[] = 0.92 + rand(-0.05, 0.08); // Dominant frequency
+        } else {
+            $frequencyPeak[] = 0.28 + rand(-0.08, 0.12); // Normal frequency
+        }
+        
+        // SP Anomaly Score (signal processing fusion)
+        if ($isAttack) {
+            $spAnomalyScore[] = 0.88 + rand(-0.08, 0.12); // High anomaly
+        } else {
+            $spAnomalyScore[] = 0.12 + rand(-0.05, 0.08); // Normal
+        }
+        
+        // ML Attack Probability
+        if ($isAttack) {
+            $mlAttackProbability[] = 0.95 + rand(-0.05, 0.05); // Near certain
+        } else {
+            $mlAttackProbability[] = 0.03 + rand(-0.02, 0.05); // Very low
+        }
+    }
+    
+    // Feature Importance (ML model)
+    $featureImportance = [
+        ['feature' => 'CurrentRate', 'importance' => 0.42],
+        ['feature' => 'ShannonEntropy', 'importance' => 0.18],
+        ['feature' => 'HurstExponent', 'importance' => 0.15],
+        ['feature' => 'BurstIntensity', 'importance' => 0.12],
+        ['feature' => 'Periodicity', 'importance' => 0.08],
+        ['feature' => 'FrequencyPeak', 'importance' => 0.05],
+    ];
+    
+    // Confusion Matrices
+    $spConfusionMatrix = [
+        'tn' => 340, 'fp' => 10,  // True Negative, False Positive
+        'fn' => 20,  'tp' => 130, // False Negative, True Positive
+    ];
+    
+    $mlConfusionMatrix = [
+        'tn' => 350, 'fp' => 0,   // Perfect classification
+        'fn' => 0,   'tp' => 150,
+    ];
+    
+    // Detection Performance
+    $detectionPerformance = [
+        'sp_accuracy' => 94.0,
+        'sp_precision' => 92.9,
+        'sp_recall' => 86.7,
+        'ml_accuracy' => 100.0,
+        'ml_precision' => 100.0,
+        'ml_recall' => 100.0,
+        'detection_latency_ms' => 45,
+        'false_positive_rate' => 0.0,
+    ];
+    
+    // Mitigation Actions
+    $mitigationActions = [
+        ['action' => 'Rate Limit', 'status' => 'active', 'threshold' => '100 req/s'],
+        ['action' => 'IP Block', 'status' => 'active', 'blocked_ips' => 127],
+        ['action' => 'CAPTCHA', 'status' => 'standby', 'trigger_threshold' => '80%'],
+    ];
+    
+    return [
+        'status' => [
+            'attack_detected' => true,
+            'attack_start' => 200,
+            'attack_end' => 400,
+            'current_phase' => 'mitigation',
+            'system_health' => 'operational',
+        ],
+        'realtime_metrics' => [
+            'traffic_rate' => ['labels' => $timeLabels, 'data' => $trafficRate],
+            'shannon_entropy' => ['labels' => $timeLabels, 'data' => $shannonEntropy],
+            'hurst_exponent' => ['labels' => $timeLabels, 'data' => $hurstExponent],
+            'burst_intensity' => ['labels' => $timeLabels, 'data' => $burstIntensity],
+            'periodicity' => ['labels' => $timeLabels, 'data' => $periodicity],
+            'frequency_peak' => ['labels' => $timeLabels, 'data' => $frequencyPeak],
+            'sp_anomaly_score' => ['labels' => $timeLabels, 'data' => $spAnomalyScore],
+            'ml_attack_probability' => ['labels' => $timeLabels, 'data' => $mlAttackProbability],
+        ],
+        'analysis' => [
+            'feature_importance' => $featureImportance,
+            'sp_confusion_matrix' => $spConfusionMatrix,
+            'ml_confusion_matrix' => $mlConfusionMatrix,
+            'detection_performance' => $detectionPerformance,
+        ],
+        'mitigation' => $mitigationActions,
+        'thresholds' => [
+            'entropy_threshold' => 3.0,
+            'hurst_threshold' => 0.5,
+            'anomaly_threshold' => 0.7,
+            'ml_decision_boundary' => 0.5,
         ],
     ];
 }

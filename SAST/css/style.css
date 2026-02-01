@@ -24,6 +24,19 @@ img,svg { display:block; max-width:100%; }
     --info:   #38bdf8;
     --ok:     #34d399;
 
+    /* ── SENTINEL SHIELD Colors ── */
+    --sentinel-traffic:     #3b82f6;  /* Traffic Rate */
+    --sentinel-entropy:     #22c55e;  /* Shannon Entropy */
+    --sentinel-hurst:        #ec4899;  /* Hurst Exponent */
+    --sentinel-burst:        #06b6d4;  /* Burst Intensity */
+    --sentinel-periodic:     #f59e0b;  /* Periodicity */
+    --sentinel-frequency:    #a855f7;  /* Frequency Peak */
+    --sentinel-anomaly:      #ef4444;  /* SP Anomaly Score */
+    --sentinel-ml:           #6366f1;  /* ML Attack Probability */
+    --sentinel-features:     #14b8a6;  /* Feature Importance */
+    --sentinel-matrices:     #f97316;  /* Confusion Matrices */
+    --sentinel-comparison:   #84cc16;  /* Detection Comparison */
+
     /* ── Backgrounds ── */
     --bg:     #0a0e1a;   /* page */
     --bs:     #111827;   /* surface / card */
@@ -483,3 +496,227 @@ tbody tr:hover { background:var(--bs2); }
     animation:rot .55s linear infinite; margin:36px auto;
 }
 @keyframes rot{to{transform:rotate(360deg)}}
+
+/* ═══════════════════════════════════════════════════════════════
+   SENTINEL SHIELD STYLES
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── Status Indicator ── */
+.sentinel-status {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+}
+
+.status-attack {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+    animation: pulse-attack 2s infinite;
+}
+
+.status-normal {
+    background: rgba(34, 197, 94, 0.15);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    color: #22c55e;
+}
+
+@keyframes pulse-attack {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.phase-info {
+    font-size: 0.8rem;
+    color: var(--t2);
+    font-weight: 500;
+}
+
+/* ─── Confusion Matrix ── */
+.matrix-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.matrix-section h4 {
+    font-size: 0.9rem;
+    color: var(--t1);
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.matrix-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    background: var(--bd);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.matrix-cell {
+    background: var(--bs);
+    padding: 12px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+    font-family: var(--fm);
+}
+
+.cell-tn { background: rgba(34, 197, 94, 0.1); color: #22c55e; }
+.cell-fp { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+.cell-fn { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+.cell-tp { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+
+.matrix-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    color: var(--t3);
+}
+
+/* ─── Mitigation Actions ── */
+.mitigation-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+}
+
+.mitigation-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: var(--bs);
+    border: 1px solid var(--bd);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.mitigation-item.active {
+    border-color: var(--sentinel-features);
+    background: rgba(20, 184, 166, 0.05);
+}
+
+.mitigation-item.standby {
+    border-color: var(--t3);
+    opacity: 0.7;
+}
+
+.mitigation-icon {
+    font-size: 1.2rem;
+}
+
+.mitigation-content h4 {
+    font-size: 0.9rem;
+    color: var(--t1);
+    margin-bottom: 2px;
+}
+
+.mitigation-content p {
+    font-size: 0.75rem;
+    color: var(--t2);
+}
+
+.mitigation-status {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--bs2);
+    color: var(--t2);
+}
+
+/* ─── Performance Metrics ── */
+.perf-metrics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.perf-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: var(--bs2);
+    border-radius: 6px;
+}
+
+.perf-label {
+    font-size: 0.8rem;
+    color: var(--t2);
+}
+
+.perf-value {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--t1);
+    font-family: var(--fm);
+}
+
+/* ─── Thresholds ── */
+.threshold-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.threshold-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: var(--bs2);
+    border-radius: 6px;
+    border-left: 3px solid var(--a2);
+}
+
+.threshold-label {
+    font-size: 0.8rem;
+    color: var(--t2);
+}
+
+.threshold-value {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--a2);
+    font-family: var(--fm);
+}
+
+/* ─── SENTINEL SHIELD Responsive ── */
+@media(max-width:768px) {
+    .matrix-container {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .mitigation-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .perf-metrics {
+        grid-template-columns: 1fr;
+    }
+    
+    .sentinel-status {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+}
